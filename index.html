@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【27卒対象】学内業界研究セミナー | 多摩大学 湘南キャンパス</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #d32f2f; /* 湘南カラー */
+            --primary-dark: #b71c1c;
+            --accent: #f57c00;
+            --bg: #fafafa;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --text-light: #666666;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            
+            /* 日程別のテーマカラー */
+            --day-9-main: #fbc02d; /* 2/9: イエロー/ゴールド */
+            --day-10-main: #1976d2; /* 2/10: ブルー */
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            margin: 0; padding: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 3rem 1.5rem 5rem 1.5rem;
+            text-align: center;
+        }
+        .header-tag {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 0.3rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        header h1 { margin: 0; font-size: 1.8rem; font-weight: 700; letter-spacing: 0.05em; }
+
+        /* 予約エリア */
+        .reserve-area {
+            max-width: 600px;
+            margin: -3rem auto 2.5rem auto;
+            padding: 0 1rem;
+            position: relative;
+            z-index: 20;
+        }
+        .btn-reserve {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 10px 20px rgba(211, 47, 47, 0.2);
+            transition: all 0.3s ease;
+            background: white;
+            color: var(--primary);
+            border: 3px solid var(--primary);
+        }
+        .btn-reserve:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(211, 47, 47, 0.3); background: #fff8f8; }
+
+        /* タブ切替 */
+        .tabs-container { max-width: 1000px; margin: 0 auto 2rem auto; padding: 0 1rem; }
+        .tabs { display: flex; justify-content: center; gap: 1rem; }
+        .tab-btn {
+            background: #e0e0e0; border: none; border-radius: 12px; padding: 1rem 2rem;
+            font-size: 1.1rem; font-weight: bold; color: #777; cursor: pointer; transition: all 0.3s; flex: 1; max-width: 250px;
+        }
+        
+        #btn-02-09.active { background: var(--day-9-main); color: #333; transform: scale(1.05); }
+        #btn-02-10.active { background: var(--day-10-main); color: white; transform: scale(1.05); }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 1.5rem 4rem 1.5rem; }
+        
+        /* 案内ボックス */
+        .info-box {
+            background: white; border-radius: 16px; padding: 1.5rem; margin-bottom: 2.5rem;
+            border-top: 5px solid var(--primary); box-shadow: var(--shadow);
+        }
+        .info-header { display: flex; align-items: center; gap: 10px; color: var(--primary); font-weight: bold; margin-bottom: 1rem; }
+
+        /* 企業カードグリッド */
+        .company-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+        .card {
+            background: white; border-radius: 16px; padding: 1.8rem; border: 1px solid #eee;
+            box-shadow: var(--shadow); cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex; flex-direction: column; position: relative; overflow: hidden;
+        }
+        .card:hover { transform: translateY(-8px); box-shadow: 0 12px 24px rgba(0,0,0,0.12); border-color: transparent; }
+        .card-day-9 { border-top: 6px solid var(--day-9-main); }
+        .card-day-10 { border-top: 6px solid var(--day-10-main); }
+
+        .industry-label {
+            font-size: 0.75rem; font-weight: bold; background: #f0f2f5; color: #555;
+            padding: 4px 12px; border-radius: 6px; align-self: flex-start; margin-bottom: 0.8rem;
+        }
+        .company-name { font-size: 1.25rem; font-weight: 700; color: #222; margin-bottom: 0.5rem; line-height: 1.3; }
+        .catchphrase { font-size: 0.9rem; color: var(--text-light); flex-grow: 1; }
+        .card-footer { margin-top: 1.2rem; font-size: 0.85rem; font-weight: bold; color: var(--primary); display: flex; align-items: center; justify-content: flex-end; }
+
+        /* モーダル */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8);
+            display: flex; align-items: center; justify-content: center; z-index: 1000;
+            opacity: 0; visibility: hidden; transition: 0.3s; padding: 1rem; backdrop-filter: blur(4px);
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-container { background: white; width: 100%; max-width: 600px; border-radius: 20px; overflow: hidden; max-height: 90vh; display: flex; flex-direction: column; }
+        .modal-top-bar { padding: 1rem 1.5rem; color: white; display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
+        .modal-header { padding: 2rem 1.5rem 1.5rem 1.5rem; border-bottom: 1px solid #f0f0f0; }
+        .modal-body { padding: 1.5rem; overflow-y: auto; }
+        .detail-item { margin-bottom: 1.5rem; }
+        .detail-label { font-weight: bold; color: var(--accent); font-size: 0.9rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 5px; }
+        .detail-content { font-size: 1rem; white-space: pre-wrap; margin: 0; color: #444; }
+        .modal-footer { padding: 1.5rem; border-top: 1px solid #f0f0f0; text-align: center; background: #fafafa; }
+        .btn-hp { display: inline-block; background: var(--primary); color: white; padding: 0.8rem 2.5rem; border-radius: 50px; text-decoration: none; font-weight: bold; transition: 0.2s; }
+
+        /* 検索・フィルタセクション */
+        .search-section { margin-top: 4rem; }
+        .filter-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .filter-group input, .filter-group select {
+            padding: 1rem;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: 0.3s;
+            background: white;
+            color: var(--text);
+        }
+        #search-input { flex: 2; min-width: 250px; }
+        #industry-filter { flex: 1; min-width: 200px; cursor: pointer; }
+
+        /* リストテーブル */
+        .all-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+        .all-table th { padding: 12px; text-align: left; color: #888; font-size: 0.85rem; border-bottom: 1px solid #eee; }
+        .all-table td { padding: 16px 12px; background: white; vertical-align: middle; }
+        .clickable-row { cursor: pointer; transition: background 0.2s; }
+        .clickable-row:hover td { background: #fef8f8 !important; }
+        .all-table tr td:first-child { border-radius: 10px 0 0 10px; }
+        .all-table tr td:last-child { border-radius: 0 10px 10px 0; }
+        
+        .badge { padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; }
+        .badge-9 { background: var(--day-9-main); color: #333; }
+        .badge-10 { background: var(--day-10-main); color: white; }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.4rem; }
+            .tabs { flex-direction: column; }
+            .tab-btn { max-width: none; }
+            .filter-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-tag">多摩大学 湘南キャンパス｜2027年卒対象</div>
+    <h1>学内業界研究セミナー</h1>
+</header>
+
+<div class="reserve-area">
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSecObAvJgmsYfBrit6qkD0oxTTW9Bv6bvkNiBRwDkAACGsJBA/viewform?usp=dialog" target="_blank" class="btn-reserve">
+        <span style="font-size: 1.3rem;">2/9(月)・10(火) 参加予約する ↗</span>
+        <span style="font-size: 0.8rem; margin-top: 8px; opacity: 0.8;">※事前予約制・各日定員あり</span>
+    </a>
+</div>
+
+<div class="tabs-container">
+    <div class="tabs">
+        <button id="btn-02-09" class="tab-btn active" onclick="switchDate('2026-02-09')">2/9(月)</button>
+        <button id="btn-02-10" class="tab-btn" onclick="switchDate('2026-02-10')">2/10(火)</button>
+    </div>
+</div>
+
+<div class="container">
+    <div class="info-box">
+        <div class="info-header">📌 湘南キャンパス 開催概要</div>
+        <div style="font-size: 1.1rem; margin-bottom: 0.5rem;"><b>時間：</b>13:30 ～ 16:25</div>
+        <div style="font-size: 1.1rem; margin-bottom: 1rem;"><b>服装：</b>スーツ着用</div>
+        <div style="background: #fff5f5; padding: 10px; border-radius: 8px; font-size: 0.9rem; color: var(--primary);">
+            ※13:30から全体説明を開始します。時間厳守で集合してください。
+        </div>
+    </div>
+
+    <h2 id="display-date-label" style="text-align:center; color:#222; margin-bottom:2rem; font-size: 1.6rem;"></h2>
+    <div id="company-grid" class="company-grid"></div>
+
+    <div class="search-section">
+        <h2 style="font-size: 1.3rem; border-left: 5px solid var(--primary); padding-left: 1rem; margin-bottom: 1.5rem;">参加企業一覧（業種別・検索可能）</h2>
+        
+        <div class="filter-group">
+            <input type="text" id="search-input" placeholder="企業名で検索..." oninput="filterList()">
+            <select id="industry-filter" onchange="filterList()">
+                <option value="">すべての業界分類</option>
+                <option value="IT・情報通信">IT・情報通信</option>
+                <option value="金融・保険">金融・保険</option>
+                <option value="医療・福祉">医療・福祉</option>
+                <option value="生活・公共サービス">生活・公共サービス</option>
+                <option value="商社・卸売">商社・卸売</option>
+                <option value="物流・運輸">物流・運輸</option>
+                <option value="建設・不動産・測量">建設・不動産・測量</option>
+                <option value="小売・流通">小売・流通</option>
+            </select>
+        </div>
+
+        <table class="all-table">
+            <thead>
+                <tr>
+                    <th style="width: 100px;">開催日</th>
+                    <th style="width: 150px;">業種分類</th>
+                    <th>企業名 (クリックで詳細)</th>
+                </tr>
+            </thead>
+            <tbody id="all-companies-body"></tbody>
+        </table>
+    </div>
+</div>
+
+<div id="modal" class="modal-overlay" onclick="closeModal()">
+    <div class="modal-container" onclick="event.stopPropagation()">
+        <div id="modal-top-bar" class="modal-top-bar">
+            <span id="modal-date-tag"></span>
+            <span>📍 湘南キャンパス</span>
+        </div>
+        <div class="modal-header">
+            <span id="modal-industry" class="industry-label"></span>
+            <h3 id="modal-name" style="margin:0; color:#222; font-size:1.6rem;"></h3>
+        </div>
+        <div class="modal-body">
+            <div class="detail-item">
+                <span class="detail-label">🏢 事業内容</span>
+                <p id="modal-business" class="detail-content"></p>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">👤 求める人物像</span>
+                <p id="modal-person" class="detail-content"></p>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">⭐ PRポイント / 詳細</span>
+                <p id="modal-pr" class="detail-content"></p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a id="modal-link" href="#" target="_blank" class="btn-hp">企業HPをチェック ↗</a>
+            <button onclick="closeModal()" style="display:block; margin:1.2rem auto 0; background:none; border:none; color:#aaa; cursor:pointer; text-decoration:underline;">閉じる</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const seminarData = {
+        "2026-02-09": [
+            { name: "株式会社伊東園ホテルズ", industry: "生活・公共サービス", catchphrase: "温泉旅館業界に革命を起こす", business: "全国50館の温泉宿を展開。合理的な手法で「通える温泉」を実現。", person: "おもてなしの心を持ち、自ら考え行動できる方", pr: "格安温泉ホテルのパイオニア。成長し続ける企業です。" },
+            { name: "株式会社イノベイションオブメディカルサービス", industry: "医療・福祉", catchphrase: "地域医療・福祉のトータルサポーター", business: "福祉用具レンタル・販売を中心に、住宅改修や介護サービスを提供。", person: "人の役に立ちたいという強い想いがある方", pr: "業界トップクラスのシェア。地域密着型のサービスが強み。" },
+            { name: "株式会社オノマシン", industry: "商社・卸売", catchphrase: "産業を支える機械工具のスペシャリスト", business: "作業工具や建設土木機械などの卸売・販売。", person: "誠実で、新しい技術や知識に興味がある方", pr: "プロ向け工具の品揃えは国内最大級。現場の「困った」を解決。" },
+            { name: "かながわ信用金庫", industry: "金融・保険", catchphrase: "地域とともに歩む「よろず相談承り処」", business: "地元神奈川の企業や個人の金融支援、地域活性化推進。", person: "地元神奈川に貢献したい、人と話すのが好きな方", pr: "金融だけでなく、経営支援や相続相談など幅広く対応。" },
+            { name: "株式会社データサービス", industry: "IT・情報通信", catchphrase: "ITで社会の仕組みを支える", business: "官公庁や大手企業の基幹システム開発、クラウド構築支援。", person: "論理的思考ができ、ITで課題を解決したい方", pr: "公共案件に強く、安定した経営基盤と高い技術力があります。" },
+            { name: "株式会社東計電算", industry: "IT・情報通信", catchphrase: "業種特化型システムのリーディングカンパニー", business: "物流、製造、小売など業種に特化したITソリューションを提供。", person: "専門性を磨き、顧客に深く寄り添いたい方", pr: "東証スタンダード上場. 自社データセンターを持つ技術集団。" },
+            { name: "日本ロジテム株式会社", industry: "物流・運輸", catchphrase: "【東証上場】総合物流のプロフェッショナル", business: "食品、アパレル等の3PL（サードパーティ・ロジスティクス）事業。", person: "チームワークを大切にし、物流の動脈を支えたい方", pr: "安定の東証スタンダード上場企業. グローバル展開も加速。" },
+            { name: "ミモザ株式会社", industry: "医療・福祉", catchphrase: "高齢者の「幸せな暮らし」をデザインする", business: "グループホームや有料老人ホームなど多様な介護施設を運営。", person: "相手の気持ちに寄り添い、優しく接することができる方", pr: "首都圏中心に展開. 温かい雰囲気の職場が自慢です。" },
+            { name: "横浜グランドインターコンチネンタルホテル", industry: "生活・公共サービス", catchphrase: "横浜のシンボルで世界最高峰のサービスを", business: "宿泊、宴会、レストラン運営. 国際的な賓客も迎える高級ホテル。", person: "最高レベルのホスピタリティを追求したい方", pr: "インターコンチネンタルブランド. 英語を活かしたい方も歓迎。" },
+            { name: "リゾートトラスト株式会社", industry: "生活・公共サービス", catchphrase: "【東証プライム】会員制リゾートの日本リーダー", business: "「エクシブ」「ベイコート倶楽部」等の会員制ホテル運営。", person: "高品質なサービスを通じて、お客様に喜びを提供したい方", pr: "業界トップの売上を誇る東証プライム上場企業. 福利厚生も充実。" }
+        ],
+        "2026-02-10": [
+            { name: "インフォテックス株式会社", industry: "IT・情報通信", catchphrase: "金融・製造インフラを支えるITの精鋭", business: "大手金融機関や製造業向けのシステム開発・運用。", person: "新しい技術を学び続け、世の中の基盤を支えたい方", pr: "少数精鋭で高い技術力を誇ります. 教育体制も万全。" },
+            { name: "神奈川三菱ふそう自動車販売株式会社", industry: "商社・卸売", catchphrase: "物流を車両から支える、働く車のドクター", business: "三菱ふそう製トラック・バスの販売、整備、部品販売。", person: "物流インフラを支えることにやりがいを感じる方", pr: "生活に欠かせない物流を「車両」の面から守る使命感。" },
+            { name: "管清工業株式会社", industry: "建設・不動産・測量", catchphrase: "下水道インフラの守り人", business: "下水道管路の調査・清掃・補修. 最新ロボットも活用。", person: "見えないところで社会を支えたい、実直な方", pr: "業界のパイオニア. 環境保全に直結するやりがいの大きな仕事。" },
+            { name: "国際自動車株式会社", industry: "物流・運輸", catchphrase: "kmブランドのホスピタリティ・ドライビング", business: "タクシー、ハイヤー、バス事業. 東京・横浜エリアで展開。", person: "運転だけでなく、最高のおもてなしを提供したい方", pr: "「km」として業界を牽引. 充実した研修制度があります。" },
+            { name: "コムテック株式会社", industry: "IT・情報通信", catchphrase: "ITとBPOで企業の変革をプロデュース", business: "企業の業務効率化を支援するIT・アウトソーシングサービス。", person: "自ら考え、顧客の課題を多角的に解決したい方", pr: "ITと人の力の両輪で、顧客のビジネスを深く支えます。" },
+            { name: "JAさがみ", industry: "金融・保険", catchphrase: "地域農業と暮らしを支える総合組織", business: "金融、共済、営農指導、直売所運営などの総合事業。", person: "地元神奈川の農業と人々の生活に貢献したい方", pr: "地域密着の安定組織. 多様な職種に挑戦できるのが魅力。" },
+            { name: "スズキ販売会社グループ", industry: "小売・流通", catchphrase: "地域のみなさまのカーライフを笑顔に", business: "スズキ車の販売、車検、点検、部品販売。", person: "親しみやすい接客で、お客様と長く付き合いたい方", pr: "軽自動車国内トップクラス. 地域に愛されるお店作り。" },
+            { name: "相鉄ホテル株式会社", industry: "生活・公共サービス", catchphrase: "横浜の顔「横浜ベイシェラトン」を運営", business: "横浜駅直結の高級ホテル運営. 上質な宿泊・飲食体験を提供。", person: "プロのサービスマンとして横浜を盛り上げたい方", pr: "相鉄グループの安定基盤. 横浜を代表するラグジュアリーホテル。" },
+            { name: "株式会社トヨタレンタリース神奈川", industry: "商社・卸売", catchphrase: "トヨタのモビリティサービスで快適な移動を", business: "レンタカー・カーリース事業. 車両管理の提案。", person: "車が好きで、お客様に最適なプランを提案したい方", pr: "トヨタブランドの安心感. 神奈川全域をカバーするネットワーク。" },
+            { name: "株式会社ノットグローバルホールディングス", industry: "物流・運輸", catchphrase: "世界を繋ぐ、国際物流のコーディネーター", business: "輸出入、通関、配送、貿易コンサルを一気通貫で提供。", person: "世界を相手に仕事がしたい、好奇心旺盛な方", pr: "ベンチャー精神に溢れ、若手からグローバルに活躍可能。" }
+        ]
+    };
+
+    let currentActiveDate = "";
+
+    function switchDate(date) {
+        currentActiveDate = date;
+        const labels = {"2026-02-09":"2月9日(月)", "2026-02-10":"2月10日(火)"};
+        const dayClass = date === "2026-02-09" ? "card-day-9" : "card-day-10";
+        
+        document.getElementById('display-date-label').innerText = labels[date] + " 参加企業一覧";
+        
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.id === `btn-${date.slice(5)}`);
+        });
+
+        const grid = document.getElementById('company-grid');
+        grid.innerHTML = seminarData[date].map((comp, idx) => `
+            <div class="card ${dayClass}" onclick="openModal('${date}', ${idx})">
+                <span class="industry-label">${comp.industry}</span>
+                <div class="company-name">${comp.name}</div>
+                <div class="catchphrase">${comp.catchphrase}</div>
+                <div class="card-footer" style="color: ${date === '2026-02-09' ? '#a67c00' : 'var(--day-10-main)'}">
+                    詳細を見る →
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function openModal(date, idx) {
+        const comp = seminarData[date][idx];
+        const bar = document.getElementById('modal-top-bar');
+        
+        if(date === "2026-02-09") {
+            bar.style.backgroundColor = "var(--day-9-main)";
+            bar.style.color = "#333";
+            document.getElementById('modal-date-tag').innerText = "🗓 2/9(月) 湘南";
+        } else {
+            bar.style.backgroundColor = "var(--day-10-main)";
+            bar.style.color = "#fff";
+            document.getElementById('modal-date-tag').innerText = "🗓 2/10(火) 湘南";
+        }
+
+        document.getElementById('modal-name').innerText = comp.name;
+        document.getElementById('modal-industry').innerText = comp.industry;
+        document.getElementById('modal-business').innerText = comp.business;
+        document.getElementById('modal-person').innerText = comp.person;
+        document.getElementById('modal-pr').innerText = comp.pr;
+        document.getElementById('modal-link').href = `https://www.google.com/search?q=${comp.name}+採用`;
+        
+        document.getElementById('modal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        document.getElementById('modal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    function filterList() {
+        const query = document.getElementById('search-input').value.toLowerCase();
+        const selectedIndustry = document.getElementById('industry-filter').value;
+        const body = document.getElementById('all-companies-body');
+        let html = "";
+        
+        const dates = ["2026-02-09", "2026-02-10"];
+        dates.forEach(date => {
+            seminarData[date].forEach((c, idx) => {
+                const matchesQuery = c.name.toLowerCase().includes(query);
+                const matchesIndustry = selectedIndustry === "" || c.industry === selectedIndustry;
+
+                if (matchesQuery && matchesIndustry) {
+                    const badgeClass = date === "2026-02-09" ? "badge-9" : "badge-10";
+                    const dayLabel = date === "2026-02-09" ? "2/9(月)" : "2/10(火)";
+                    html += `
+                        <tr class="clickable-row" onclick="openModal('${date}', ${idx})">
+                            <td><span class="badge ${badgeClass}">${dayLabel}</span></td>
+                            <td style="color:#666; font-size:0.85rem;">${c.industry}</td>
+                            <td style="font-weight:bold; color:#222;">${c.name}</td>
+                        </tr>
+                    `;
+                }
+            });
+        });
+        body.innerHTML = html || "<tr><td colspan='3' style='text-align:center; padding:2rem; color:#aaa;'>該当する企業が見つかりませんでした</td></tr>";
+    }
+
+    window.onload = () => {
+        switchDate('2026-02-09');
+        filterList();
+    };
+</script>
+</body>
+</html>
